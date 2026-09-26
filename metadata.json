@@ -1,0 +1,6 @@
+{
+  "name": "Nirvaha AI Mobile - Status & Documentation Summarizer",
+  "description": "Mobile public-service project status tracker and AI documentation update summarizer powered by Gemini and NIRVAHA AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
