@@ -24,8 +24,8 @@ import { Language, UserProfile, VerifiedService, ChatMessage, LifeEventId, Eligi
 import { mockVerifiedServices } from '../data/mockData';
 import { getTranslation } from '../locales/translations';
 import { VoiceAssistant } from '../utils/audio';
-import { ScholarshipMatchboard } from './ScholarshipMatchboard';
 import { NirvahaLogo } from './NirvahaLogo';
+import { ScholarshipMatchboard } from './ScholarshipMatchboard';
 
 // Helper for localized distress greeting
 const getAgentDistressGreeting = (lang: Language) => {
@@ -88,47 +88,31 @@ export const AgentChat: React.FC<AgentChatProps> = ({
   const [isSpeakingId, setIsSpeakingId] = useState<string | null>(null);
   const [activeWhyResultService, setActiveWhyResultService] = useState<VerifiedService | null>(null);
   const [isLoadingReply, setIsLoadingReply] = useState(false);
+  const [micNotice, setMicNotice] = useState<string | null>(null);
 
-  // Initial welcome message
+  // Initial welcome message - asks the user first without predefined buttons
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    const name = userProfile.preferredName || (language === 'kn' ? 'ನಾಗರಿಕರೇ' : 'Citizen');
+    const role = userProfile.userType || 'Citizen';
     return [
       {
         id: 'msg-welcome',
         sender: 'agent',
-        text: 'Hello. Tell me what has changed or what support you need. You can type or speak in your preferred language.',
-        textKn: 'ನಮಸ್ಕಾರ. ನಿಮ್ಮ ಪರಿಸ್ಥಿತಿಯಲ್ಲಿ ಏನಾಯಿತು ಅಥವಾ ಯಾವ ಸಹಾಯ ಬೇಕು ತಿಳಿಸಿ. ನೀವು ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯಲ್ಲಿ ಟೈಪ್ ಮಾಡಬಹುದು ಅಥವಾ ಮಾತನಾಡಬಹುದು.',
+        text: `Hello ${name} (${role})! I am your NIRVAHA AI Public Service Guide. How can I assist you today? Please tell me what service, scholarship, certificate, crop relief, pension, or scheme you are looking for, or describe your situation.`,
+        textKn: `ನಮಸ್ಕಾರ ${name} ಅವರೇ (${role})! ನಾನು ನಿರ್ವಾಹ AI ಸಾರ್ವಜನಿಕ ಸೇವಾ ಮಾರ್ಗದರ್ಶಿ. ಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ? ನಿಮಗೆ ಯಾವ ಸರ್ಕಾರಿ ಯೋಜನೆ, ವಿದ್ಯಾರ್ಥಿವೇತನ, ಬೆಳೆ ಪರಿಹಾರ, ಪಿಂಚಣಿ, ಪಡಿತರ ಚೀಟಿ ಅಥವಾ ಪ್ರಮಾಣಪತ್ರಗಳ ಮಾಹಿತಿ ಬೇಕು ಎಂದು ತಿಳಿಸಿ.`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        label: 'AI Guidance',
+        label: 'AI Guide Question',
       },
     ];
   });
 
-  // Track student questionnaire step if active
+  // Track flow steps
   const [studentFlowStep, setStudentFlowStep] = useState<number>(0);
-  const handledInitialLifeEventRef = useRef<string | null>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoadingReply]);
-
-  // Handle initial life event trigger if passed from landing page
-  useEffect(() => {
-    if (initialLifeEvent && handledInitialLifeEventRef.current !== initialLifeEvent) {
-      handledInitialLifeEventRef.current = initialLifeEvent;
-      if (initialLifeEvent === 'student_fees') {
-        triggerStudentDistressDemo();
-      } else if (initialLifeEvent === 'loss_of_earner') {
-        triggerLossOfEarnerDemo();
-      } else if (initialLifeEvent === 'crop_loss') {
-        triggerCropLossDemo();
-      } else if (initialLifeEvent === 'disability') {
-        triggerDisabilityDemo();
-      } else if (initialLifeEvent === 'relocation') {
-        triggerRelocationDemo();
-      }
-    }
-  }, [initialLifeEvent]);
 
   // Handle autoStartVoice trigger from Landing Page mic
   useEffect(() => {
@@ -158,6 +142,7 @@ export const AgentChat: React.FC<AgentChatProps> = ({
   const startVoiceCapture = () => {
     if (isListening) return;
     setIsListening(true);
+    setMicNotice(null);
     let capturedText = '';
 
     VoiceAssistant.startListening(
@@ -168,12 +153,13 @@ export const AgentChat: React.FC<AgentChatProps> = ({
       },
       (err) => {
         console.warn('Voice capture status:', err);
-        // Fallback test query for immediate testing if mic permission is restricted
-        const fallbackText = language === 'kn'
-          ? 'ನನಗೆ ಲಭ್ಯವಿರುವ ಎಲ್ಲಾ ವಿದ್ಯಾರ್ಥಿವೇತನಗಳನ್ನು ತೋರಿಸಿ'
-          : 'Show all scholarships available for me';
-        setInputMessage(fallbackText);
         setIsListening(false);
+        setMicNotice(
+          language === 'kn'
+            ? 'ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಕೆಳಗಿನ ಪ್ರಶ್ನೆಗಳನ್ನು ಬಳಸಿ.'
+            : 'Microphone permission restricted or unavailable. You can type or tap a sample query below.'
+        );
+        setTimeout(() => setMicNotice(null), 5000);
       },
       () => {
         setIsListening(false);
@@ -189,9 +175,9 @@ export const AgentChat: React.FC<AgentChatProps> = ({
     if (isListening) {
       VoiceAssistant.stopListening();
       setIsListening(false);
-      return;
+    } else {
+      startVoiceCapture();
     }
-    startVoiceCapture();
   };
 
   // Main Demo Flow: Student Financial Distress
@@ -416,7 +402,17 @@ export const AgentChat: React.FC<AgentChatProps> = ({
           serviceData = mockVerifiedServices.find((s) => s.id === 'srv-karnataka-fee');
         }
 
-        // Action options
+        // Contextual action suggestions based on user persona and search
+        const personaVaultLabel = userProfile.userType === 'Farmer'
+          ? (language === 'kn' ? '🌾 ರೈತ ಯೋಜನೆಗಳು & ಪಹಣಿ ವಾಲ್ಟ್' : '🌾 View Farmer Schemes & Vault')
+          : userProfile.userType === 'Worker'
+          ? (language === 'kn' ? '🔨 ಕಾರ್ಮಿಕ ಕಲ್ಯಾಣ ಯೋಜನೆಗಳು & ವಾಲ್ಟ್' : '🔨 View Worker Schemes & Vault')
+          : userProfile.userType === 'Senior Citizen'
+          ? (language === 'kn' ? '🧓 ಹಿರಿಯರ ಪಿಂಚಣಿ ಯೋಜನೆಗಳು & ವಾಲ್ಟ್' : '🧓 View Senior Pensions & Vault')
+          : userProfile.userType === 'Person with Disability'
+          ? (language === 'kn' ? '♿ ದಿವ್ಯಾಂಗ ಸೌಲಭ್ಯಗಳು & ವಾಲ್ಟ್' : '♿ View Disability Schemes & Vault')
+          : (language === 'kn' ? '🎓 ವಿದ್ಯಾರ್ಥಿವೇತನಗಳ ಮ್ಯಾಚ್‌ಬೋರ್ಡ್' : '🎓 View Matching Scholarships');
+
         const options = serviceData ? [
           ...(wantsScholarships || serviceData.isScholarship ? [{
             id: 'opt-all-scholarships',
@@ -438,6 +434,12 @@ export const AgentChat: React.FC<AgentChatProps> = ({
             actionType: 'create_action_plan' as const,
           },
           {
+            id: 'opt-vault',
+            label: personaVaultLabel,
+            labelKn: personaVaultLabel,
+            actionType: 'open_vault' as const,
+          },
+          {
             id: 'opt-human',
             label: 'Need Human Help?',
             labelKn: 'ಮಾನವ ಅಧಿಕಾರಿಯ ಸಹಾಯ ಬೇಕೇ?',
@@ -445,10 +447,10 @@ export const AgentChat: React.FC<AgentChatProps> = ({
           },
         ] : [
           {
-            id: 'opt-all-scholarships',
-            label: '🎓 View Verified Scholarships',
-            labelKn: 'ವಿದ್ಯಾರ್ಥಿವೇತನಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
-            actionType: 'select_option' as const,
+            id: 'opt-persona-schemes',
+            label: personaVaultLabel,
+            labelKn: personaVaultLabel,
+            actionType: 'open_vault' as const,
           },
           {
             id: 'opt-actionplan',
@@ -546,72 +548,17 @@ export const AgentChat: React.FC<AgentChatProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={onOpenActionPlan}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#FAF5FF] text-[#9333EA] hover:bg-[#9333EA] hover:text-white transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#FAF5FF] text-[#9333EA] hover:bg-[#9333EA] hover:text-white transition-colors cursor-pointer"
           >
             <CheckSquare className="w-3.5 h-3.5" />
             <span>{t.nav.actionPlan}</span>
           </button>
           <button
-            onClick={() => onOpenHumanSupport('General Assistance')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-50 text-[#38104E] hover:bg-purple-100 transition-colors"
+            onClick={() => onOpenHumanSupport(`${userProfile.userType} Guidance Desk`)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 text-[#38104E] hover:bg-purple-100 transition-colors"
           >
             <Users className="w-3.5 h-3.5 text-[#9333EA]" />
             <span className="hidden sm:inline">Human Help</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Suggested Quick Prompts */}
-      <div className="mb-3 shrink-0">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
-          <span className="text-[11px] font-bold text-slate-400 shrink-0">
-            {t.chat.quickSuggestions}
-          </span>
-          <button
-            onClick={triggerAllScholarships}
-            className="shrink-0 px-3 py-1.5 rounded-lg bg-[#FAF5FF] border border-[#9333EA]/30 text-[#38104E] hover:bg-[#9333EA] hover:text-white transition-colors shadow-2xs font-bold flex items-center gap-1.5"
-          >
-            <span>🎓</span>
-            <span>{language === 'kn' ? 'ನನ್ನ ಎಲ್ಲಾ ವಿದ್ಯಾರ್ಥಿವೇತನಗಳು (7 ಲಭ್ಯ)' : 'All Scholarships for Me (7 Available)'}</span>
-          </button>
-          {onOpenVault && (
-            <button
-              onClick={onOpenVault}
-              className="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-purple-100 text-slate-700 hover:border-[#9333EA] hover:text-[#38104E] transition-colors shadow-2xs font-medium flex items-center gap-1.5"
-            >
-              <span>📁</span>
-              <span>{language === 'kn' ? 'ದಾಖಲೆಗಳ ವಾಲ್ಟ್' : 'My Document Vault'}</span>
-            </button>
-          )}
-          <button
-            onClick={triggerStudentDistressDemo}
-            className="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-purple-100 text-slate-700 hover:border-[#9333EA] hover:text-[#38104E] transition-colors shadow-2xs font-medium"
-          >
-            🎓 {language === 'kn' ? 'ಕಾಲೇಜು ಶುಲ್ಕ ಸಂಕಷ್ಟ (ಮುಖ್ಯ ಡೆಮೊ)' : 'College fees distress (Main Demo)'}
-          </button>
-          <button
-            onClick={triggerCropLossDemo}
-            className="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-purple-100 text-slate-700 hover:border-[#9333EA] hover:text-[#38104E] transition-colors shadow-2xs font-medium"
-          >
-            🌾 {language === 'kn' ? 'ಮಳೆ ಬೆಳೆ ಹಾನಿ' : 'Rain crop damage'}
-          </button>
-          <button
-            onClick={triggerLossOfEarnerDemo}
-            className="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-purple-100 text-slate-700 hover:border-[#9333EA] hover:text-[#38104E] transition-colors shadow-2xs font-medium"
-          >
-            🤝 {language === 'kn' ? 'ಕುಟುಂಬದ ಆಧಾರಸ್ತಂಭ ನಷ್ಟ' : 'Loss of family earner'}
-          </button>
-          <button
-            onClick={triggerDisabilityDemo}
-            className="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-purple-100 text-slate-700 hover:border-[#9333EA] hover:text-[#38104E] transition-colors shadow-2xs font-medium"
-          >
-            ♿ {language === 'kn' ? 'ಯುಡಿಐಡಿ / ವಿಕಲಚೇತನ ನೆರವು' : 'Disability / UDID support'}
-          </button>
-          <button
-            onClick={triggerRelocationDemo}
-            className="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-purple-100 text-slate-700 hover:border-[#9333EA] hover:text-[#38104E] transition-colors shadow-2xs font-medium"
-          >
-            📍 {language === 'kn' ? 'ಸ್ಥಳಾಂತರ ವಿಳಾಸ ನವೀಕರಣ' : 'Relocation address updates'}
           </button>
         </div>
       </div>
@@ -735,8 +682,10 @@ export const AgentChat: React.FC<AgentChatProps> = ({
                             onOpenAssistFill(opt.payload);
                           } else if (opt.actionType === 'create_action_plan') {
                             onOpenActionPlan();
+                          } else if (opt.actionType === 'open_vault') {
+                            onOpenVault ? onOpenVault() : onNavigate('vault');
                           } else if (opt.actionType === 'human_help') {
-                            onOpenHumanSupport('Student Fee Support Assistance');
+                            onOpenHumanSupport(`${userProfile.userType} Guidance Desk`);
                           } else {
                             handleSelectOption(opt.id);
                           }
@@ -779,9 +728,9 @@ export const AgentChat: React.FC<AgentChatProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Voice Listening Active Indicator Banner */}
+      {/* Listening Indicator Banner */}
       {isListening && (
-        <div className="mt-2.5 px-4 py-2 bg-[#FAF5FF] border border-[#9333EA]/30 rounded-xl flex items-center justify-between shadow-xs animate-pulse">
+        <div className="mt-2.5 px-4 py-2.5 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 border border-purple-200 rounded-xl flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shrink-0" />
             <span className="text-xs sm:text-sm font-semibold text-[#38104E]">
@@ -793,14 +742,31 @@ export const AgentChat: React.FC<AgentChatProps> = ({
           <button
             type="button"
             onClick={handleMicToggle}
-            className="px-2.5 py-0.5 bg-white hover:bg-rose-50 text-rose-600 rounded-lg text-xs font-bold border border-rose-200 transition-colors"
+            className="px-3 py-1 bg-[#38104E] hover:bg-[#4D166A] text-white rounded-lg text-xs font-semibold shadow-xs"
           >
             {language === 'kn' ? 'ನಿಲ್ಲಿಸಿ' : 'Stop'}
           </button>
         </div>
       )}
 
-      {/* Input Form with Large Accessible Mic */}
+      {/* Mic Permission / Restriction Notice Banner */}
+      {micNotice && (
+        <div className="mt-1.5 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-800">
+          <span className="font-medium flex items-center gap-1.5">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            {micNotice}
+          </span>
+          <button
+            type="button"
+            onClick={() => setMicNotice(null)}
+            className="text-amber-700 hover:text-amber-900 font-bold text-xs ml-2 cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* Input Form with Voice Mic */}
       <form
         onSubmit={handleSendMessage}
         className="mt-3 shrink-0 bg-white rounded-2xl p-2 sm:p-2.5 border border-purple-200 shadow-md flex items-center gap-2"
@@ -808,12 +774,12 @@ export const AgentChat: React.FC<AgentChatProps> = ({
         <button
           type="button"
           onClick={handleMicToggle}
-          className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all shrink-0 ${
+          className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
             isListening
-              ? 'bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/20'
+              ? 'bg-rose-600 text-white animate-pulse shadow-md shadow-rose-500/30'
               : 'bg-purple-50 hover:bg-[#FAF5FF] text-[#38104E] hover:text-[#9333EA]'
           }`}
-          title={isListening ? t.chat.stopListening : t.chat.speakNow}
+          title={isListening ? 'Click to stop listening' : 'Speak to NIRVAHA AI'}
         >
           {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
         </button>
@@ -822,14 +788,20 @@ export const AgentChat: React.FC<AgentChatProps> = ({
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder={isListening ? t.chat.listening : t.chat.placeholder}
+          placeholder={
+            isListening
+              ? (language === 'kn' ? 'ಧ್ವನಿ ಆಲಿಸಲಾಗುತ್ತಿದೆ... ಮಾತನಾಡಿ' : 'Listening... Speak your query clearly')
+              : (language === 'kn'
+                ? 'ಯೋಜನೆ, ಬೆಳೆ ಪರಿಹಾರ, ಪಿಂಚಣಿ, ಪಹಣಿ, ಅಥವಾ ಸ್ಕಾಲರ್‌ಶಿಪ್ ಬಗ್ಗೆ ಕೇಳಿ...'
+                : 'Search or ask for schemes, crop relief, pensions, RTC, or scholarships...')
+          }
           className="flex-1 bg-transparent border-none text-sm sm:text-base text-slate-900 focus:outline-none px-2"
         />
 
         <button
           type="submit"
           disabled={!inputMessage.trim() || isLoadingReply}
-          className="w-11 h-11 rounded-xl bg-[#38104E] hover:bg-[#4D166A] disabled:opacity-40 text-white flex items-center justify-center transition-colors shrink-0"
+          className="w-11 h-11 rounded-xl bg-[#38104E] hover:bg-[#4D166A] disabled:opacity-40 text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer"
           title={t.chat.send}
         >
           <Send className="w-5 h-5" />

@@ -258,7 +258,7 @@ export interface ChatMessage {
   text: string;
   textKn?: string;
   timestamp: string;
-  label?: 'AI Guidance' | 'Verified Information' | 'Needs Official Confirmation' | 'Urgent: Contact Human Support';
+  label?: 'AI Guidance' | 'Verified Information' | 'Needs Official Confirmation' | 'Urgent: Contact Human Support' | 'AI Guide Question';
   verifiedSource?: {
     badge: string;
     sourceName: string;
@@ -272,7 +272,7 @@ export interface ChatMessage {
     id: string;
     label: string;
     labelKn?: string;
-    actionType: 'select_option' | 'open_assistfill' | 'create_action_plan' | 'human_help' | 'open_url';
+    actionType: 'select_option' | 'open_assistfill' | 'create_action_plan' | 'human_help' | 'open_url' | 'open_vault';
     payload?: any;
   }[];
   interactiveType?: 'questionnaire' | 'service_recommendation' | 'assist_fill_prompt' | 'scholarship_matchboard';

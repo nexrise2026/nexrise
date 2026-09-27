@@ -934,3 +934,17 @@ export function createPersonaProfile(
 
   return baseProfile;
 }
+
+export function buildProfileForPersona(
+  persona: UserType,
+  userDetails: { preferredName?: string; email?: string; phone?: string; [key: string]: any } = {}
+): UserProfile {
+  return createPersonaProfile(
+    persona,
+    userDetails.preferredName || '',
+    userDetails.email || '',
+    userDetails.phone || '',
+    userDetails
+  );
+}
+

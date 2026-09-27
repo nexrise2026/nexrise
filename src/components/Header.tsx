@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Globe, ChevronDown, Check } from 'lucide-react';
+import { Globe, ChevronDown, Check, Users } from 'lucide-react';
 import { Language, UserProfile, SUPPORTED_LANGUAGES } from '../types';
 import { getTranslation } from '../locales/translations';
 import { NirvahaLogo } from './NirvahaLogo';
@@ -13,6 +13,7 @@ interface HeaderProps {
   onOpenProfile: () => void;
   onLogout?: () => void;
   onSwitchPersona?: () => void;
+  onOpenWhoWeAre?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -24,6 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenProfile,
   onLogout,
   onSwitchPersona,
+  onOpenWhoWeAre,
 }) => {
   const t = getTranslation(language);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
@@ -99,24 +101,6 @@ export const Header: React.FC<HeaderProps> = ({
             {t.nav.assistFill}
           </button>
           <button
-            onClick={() => onNavigate('scholarships')}
-            className={`transition-colors hover:text-[#38104E] ${
-              currentTab === 'scholarships' ? 'text-[#38104E] font-semibold border-b-2 border-[#9333EA] pb-0.5' : ''
-            }`}
-          >
-            {userProfile.userType === 'Farmer'
-              ? (language === 'kn' ? 'ರೈತ ಯೋಜನೆಗಳು' : 'Farmer Schemes')
-              : userProfile.userType === 'Worker'
-              ? (language === 'kn' ? 'ಕಾರ್ಮಿಕ ಯೋಜನೆಗಳು' : 'Worker Schemes')
-              : userProfile.userType === 'Senior Citizen'
-              ? (language === 'kn' ? 'ಹಿರಿಯರ ಪಿಂಚಣಿ' : 'Senior Pensions')
-              : userProfile.userType === 'Person with Disability'
-              ? (language === 'kn' ? 'ವಿಶೇಷ ನೆರವು' : 'Disability Aid')
-              : userProfile.userType === 'Student'
-              ? (language === 'kn' ? 'ವಿದ್ಯಾರ್ಥಿವೇತನಗಳು' : 'Scholarships')
-              : (language === 'kn' ? 'ಯೋಜನೆಗಳು' : 'Govt Schemes')}
-          </button>
-          <button
             onClick={() => onNavigate('vault')}
             className={`transition-colors hover:text-[#38104E] flex items-center gap-1.5 ${
               currentTab === 'vault' ? 'text-[#38104E] font-semibold border-b-2 border-[#9333EA] pb-0.5' : ''
@@ -140,10 +124,30 @@ export const Header: React.FC<HeaderProps> = ({
           >
             {t.nav.support}
           </button>
+          {onOpenWhoWeAre && (
+            <button
+              onClick={onOpenWhoWeAre}
+              className="transition-colors hover:text-white flex items-center gap-1 font-bold text-xs px-2.5 py-1 rounded-lg bg-[#FAF5FF] text-[#38104E] border border-purple-200 shadow-2xs hover:bg-[#9333EA]"
+              title="Who We Are & Explore other citizen groups"
+            >
+              <Users className="w-3.5 h-3.5 text-[#9333EA]" />
+              <span>{language === 'kn' ? 'ನಾವ್ಯಾರು' : 'Who We Are'}</span>
+            </button>
+          )}
         </nav>
 
         {/* Zone 3: Primary Actions (Language Dropdown, Profile) */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {onOpenWhoWeAre && (
+            <button
+              onClick={onOpenWhoWeAre}
+              className="lg:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-[#9333EA] text-[#38104E] hover:text-white text-xs font-bold border border-purple-200 transition-colors"
+              title="Who We Are / Explore other citizens"
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span className="text-[11px]">{language === 'kn' ? 'ನಾವ್ಯಾರು' : 'Who We Are'}</span>
+            </button>
+          )}
           {/* Regional Languages Dropdown Selector */}
           <div className="relative" ref={langMenuRef}>
             <button

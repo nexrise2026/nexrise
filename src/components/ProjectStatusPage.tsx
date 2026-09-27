@@ -20,6 +20,7 @@ import {
   Building2,
   ShieldCheck,
   TrendingUp,
+  Users,
 } from 'lucide-react';
 import {
   ProjectStatusItem,
@@ -36,6 +37,7 @@ interface ProjectStatusPageProps {
   onNavigate: (tab: string) => void;
   onOpenAssistFill?: (serviceId: string) => void;
   onOpenHumanSupport?: (category: string) => void;
+  onOpenWhoWeAre?: () => void;
 }
 
 export const ProjectStatusPage: React.FC<ProjectStatusPageProps> = ({
@@ -44,6 +46,7 @@ export const ProjectStatusPage: React.FC<ProjectStatusPageProps> = ({
   onNavigate,
   onOpenAssistFill,
   onOpenHumanSupport,
+  onOpenWhoWeAre,
 }) => {
   // Initialize with projects tailored strictly to user's persona
   const [projects, setProjects] = useState<ProjectStatusItem[]>(() =>
@@ -276,7 +279,17 @@ export const ProjectStatusPage: React.FC<ProjectStatusPageProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-center">
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          {onOpenWhoWeAre && (
+            <button
+              onClick={onOpenWhoWeAre}
+              className="px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-semibold flex items-center gap-1.5 transition-all border border-white/30 active:scale-95 shadow-xs"
+              title="Learn about NIRVAHA and explore other user roles"
+            >
+              <Users className="w-4 h-4 text-purple-200" />
+              <span>{language === 'kn' ? 'ನಾವ್ಯಾರು (Who We Are)' : 'Who We Are'}</span>
+            </button>
+          )}
           <button
             onClick={() => setIsNewProjectModalOpen(true)}
             className="px-3.5 py-2 rounded-xl bg-purple-400/30 hover:bg-purple-400/40 text-white text-xs font-semibold flex items-center gap-1.5 transition-all border border-white/20 active:scale-95"
@@ -288,7 +301,7 @@ export const ProjectStatusPage: React.FC<ProjectStatusPageProps> = ({
       </div>
 
       {/* Persona Context Card */}
-      <div className="bg-white rounded-2xl border border-purple-200/80 p-3 sm:p-4 flex items-center justify-between gap-3 shadow-2xs">
+      <div className="bg-white rounded-2xl border border-purple-200/80 p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#38104E] text-white flex items-center justify-center font-bold text-sm shrink-0">
             {userProfile.preferredName ? userProfile.preferredName.charAt(0).toUpperCase() : 'U'}
@@ -308,12 +321,24 @@ export const ProjectStatusPage: React.FC<ProjectStatusPageProps> = ({
           </div>
         </div>
 
-        <button
-          onClick={() => onNavigate('home')}
-          className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 text-[#38104E] border border-purple-200 shrink-0"
-        >
-          {language === 'kn' ? 'ಪಾತ್ರ ಬದಲಾಯಿಸಿ' : 'Switch Role'}
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          {onOpenWhoWeAre && (
+            <button
+              onClick={onOpenWhoWeAre}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#FAF5FF] hover:bg-[#9333EA] text-[#38104E] hover:text-white border border-[#9333EA]/30 flex items-center gap-1.5 transition-all shadow-2xs"
+              title="Explore other citizen personas and what they receive"
+            >
+              <Users className="w-3.5 h-3.5 text-[#9333EA] group-hover:text-white" />
+              <span>{language === 'kn' ? 'ನಾವ್ಯಾರು / ಇತರ ಬಳಕೆದಾರರು' : 'Who We Are / Other Users'}</span>
+            </button>
+          )}
+          <button
+            onClick={() => onNavigate('home')}
+            className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 text-[#38104E] border border-purple-200 shrink-0"
+          >
+            {language === 'kn' ? 'ಪಾತ್ರ ಬದಲಾಯಿಸಿ' : 'Switch Role'}
+          </button>
+        </div>
       </div>
 
       {/* Top Mobile KPI Metrics Strip */}
@@ -372,7 +397,7 @@ export const ProjectStatusPage: React.FC<ProjectStatusPageProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-[#38104E] uppercase tracking-wide">
-                  Gemini 3.8 AI Executive Summary
+                  Executive AI Status Summary
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200">
                   {summary.healthStatus}

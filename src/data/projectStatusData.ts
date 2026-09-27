@@ -276,7 +276,7 @@ export const defaultStatusSummary: ProjectStatusSummary = {
     'Initiate early renewal of Caste/Income certificate RD0038291024 before its Nov 15 expiry.',
   ],
   generatedAt: new Date().toISOString(),
-  sourceModel: 'gemini-3.8-flash',
+  sourceModel: 'nirvaha-executive-engine',
 };
 
 export const defaultDocSummary: DocumentationSummary = {
@@ -298,5 +298,5 @@ export const defaultDocSummary: DocumentationSummary = {
     { name: 'College Study Bonafide (Semester 3)', daysLeft: 90, renewalPortal: 'College Student Welfare Desk' },
   ],
   generatedAt: new Date().toISOString(),
-  sourceModel: 'gemini-3.8-flash',
+  sourceModel: 'nirvaha-executive-engine',
 };

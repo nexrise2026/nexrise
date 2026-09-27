@@ -17,6 +17,7 @@ import { ScholarshipMatchboard } from './components/ScholarshipMatchboard';
 import { OnboardingModal } from './components/OnboardingModal';
 import { DemoGuideModal } from './components/DemoGuideModal';
 import { AuthScreen } from './components/AuthScreen';
+import { WhoWeAreModal } from './components/WhoWeAreModal';
 import {
   Language,
   UserProfile,
@@ -25,9 +26,10 @@ import {
   ConsentReceipt,
   UploadedDoc,
   AuthSession,
+  UserType,
 } from './types';
 import { defaultUserProfile, mockVerifiedServices, initialConsentReceipts, initialUploadedDocuments } from './data/mockData';
-import { getDocumentsForUserType } from './data/personaData';
+import { getDocumentsForUserType, buildProfileForPersona } from './data/personaData';
 
 export default function App() {
   // Check if active authenticated session exists
@@ -89,7 +91,21 @@ export default function App() {
   // Modals
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
   const [isDemoGuideOpen, setIsDemoGuideOpen] = useState<boolean>(false);
+  const [isWhoWeAreOpen, setIsWhoWeAreOpen] = useState<boolean>(false);
   const [humanHelpCategory, setHumanHelpCategory] = useState<string>('College Scholarship Help Desk');
+
+  const handleSwitchPersona = (newRole: UserType, updatedProfile?: UserProfile) => {
+    const newProf = updatedProfile || buildProfileForPersona(newRole, {
+      preferredName: userProfile.preferredName,
+      email: userProfile.email,
+      phone: userProfile.phone,
+    });
+    setUserProfile(newProf);
+    setUserDocuments(getDocumentsForUserType(newRole));
+    if (authSession?.userEmail) {
+      localStorage.setItem(`nirvaha_profile_${authSession.userEmail}`, JSON.stringify(newProf));
+    }
+  };
 
   const handleLoginSuccess = (
     session: AuthSession,
@@ -163,7 +179,8 @@ export default function App() {
           userProfile={userProfile}
           onOpenProfile={() => setIsOnboardingOpen(true)}
           onLogout={handleLogout}
-          onSwitchPersona={handleLogout}
+          onSwitchPersona={() => setIsWhoWeAreOpen(true)}
+          onOpenWhoWeAre={() => setIsWhoWeAreOpen(true)}
         />
 
         {/* Main View Port Container */}
@@ -176,6 +193,7 @@ export default function App() {
               onNavigate={setCurrentTab}
               onOpenAssistFill={handleOpenAssistFillForService}
               onOpenHumanSupport={handleOpenHumanSupport}
+              onOpenWhoWeAre={() => setIsWhoWeAreOpen(true)}
             />
           )}
 
@@ -198,6 +216,7 @@ export default function App() {
                 setAutoStartVoice(true);
                 setCurrentTab('agent');
               }}
+              onOpenWhoWeAre={() => setIsWhoWeAreOpen(true)}
             />
           )}
 
@@ -338,6 +357,16 @@ export default function App() {
           onSwitchLanguage={setLanguage}
           onOpenAssistFill={() => setCurrentTab('assist-fill')}
           onOpenConsent={() => setCurrentTab('consent')}
+        />
+
+        {/* Who We Are & Citizen Explorer Modal */}
+        <WhoWeAreModal
+          isOpen={isWhoWeAreOpen}
+          onClose={() => setIsWhoWeAreOpen(false)}
+          language={language}
+          currentProfile={userProfile}
+          onSwitchPersona={handleSwitchPersona}
+          onNavigateTab={setCurrentTab}
         />
       </div>
     </MobileDeviceFrame>

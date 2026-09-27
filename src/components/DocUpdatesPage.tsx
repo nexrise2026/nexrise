@@ -284,7 +284,7 @@ export const DocUpdatesPage: React.FC<DocUpdatesPageProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-[#38104E] uppercase tracking-wide">
-                  Gemini 3.8 Documentation Digest
+                  Executive Documentation Digest
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                   {summary.complianceScore}% High Compliance

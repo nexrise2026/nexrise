@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Lock, X, Check, AlertCircle } from 'lucide-react';
+import { Lock, X, Check, AlertCircle, LogOut, MapPin } from 'lucide-react';
 import { UserProfile, UserType, Language, SUPPORTED_LANGUAGES } from '../types';
 import { getTranslation } from '../locales/translations';
 import { NirvahaLogo } from './NirvahaLogo';
+import { INDIAN_STATES, getDistrictsForState } from '../data/indiaLocations';
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface OnboardingModalProps {
   profile: UserProfile;
   onSaveProfile: (profile: UserProfile) => void;
   language: Language;
+  onLogout?: () => void;
 }
 
 export const OnboardingModal: React.FC<OnboardingModalProps> = ({
@@ -18,11 +20,14 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   profile,
   onSaveProfile,
   language,
+  onLogout,
 }) => {
   const t = getTranslation(language);
   const [formData, setFormData] = useState<UserProfile>({ ...profile });
   const [hasConsented, setHasConsented] = useState<boolean>(profile.termsAccepted);
   const [errorMsg, setErrorMsg] = useState<string>('');
+
+  const availableDistricts = formData.state ? getDistrictsForState(formData.state) : [];
 
   if (!isOpen) return null;
 
@@ -124,28 +129,57 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {t.onboarding.stateLabel}
+                {t.onboarding.stateLabel} *
               </label>
-              <input
-                type="text"
+              <select
+                required
                 value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                placeholder="e.g. Karnataka"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#9333EA] bg-white"
-              />
+                onChange={(e) => {
+                  const newState = e.target.value;
+                  const districts = getDistrictsForState(newState);
+                  setFormData({
+                    ...formData,
+                    state: newState,
+                    district: districts.includes(formData.district) ? formData.district : (districts[0] || ''),
+                  });
+                }}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#9333EA] bg-white cursor-pointer"
+              >
+                <option value="">
+                  {language === 'kn' ? '-- ನಿಮ್ಮ ರಾಜ್ಯ / ಕೇಂದ್ರಾಡಳಿತ ಪ್ರದೇಶ ಆಯ್ಕೆಮಾಡಿ --' : '-- Select Your State / UT --'}
+                </option>
+                {INDIAN_STATES.map((st) => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {t.onboarding.districtLabel}
+                {t.onboarding.districtLabel} *
               </label>
-              <input
-                type="text"
+              <select
+                required
+                disabled={!formData.state}
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                placeholder="e.g. Bengaluru Urban"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#9333EA] bg-white"
-              />
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-[#9333EA] bg-white cursor-pointer ${
+                  !formData.state ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed' : 'border-slate-300'
+                }`}
+              >
+                <option value="">
+                  {!formData.state
+                    ? (language === 'kn' ? '-- ಮೊದಲು ರಾಜ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ --' : '-- Please Select State First --')
+                    : (language === 'kn' ? '-- ನಿಮ್ಮ ಜಿಲ್ಲೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ --' : '-- Select Your District --')}
+                </option>
+                {availableDistricts.map((dist) => (
+                  <option key={dist} value={dist}>
+                    {dist}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="sm:col-span-2">

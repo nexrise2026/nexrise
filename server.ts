@@ -458,29 +458,52 @@ You are NIRVAHA AI, a trusted, calm, empathetic, and consent-first public-servic
 Core Tagline: "From life event to the right action."
 Language: Respond strictly in ${targetLanguagePrompt} with clean, simple, natural, empathetic phrasing.
 
-Safety and Persona Rules:
-1. Empathy without false promises. Never guarantee approval or eligibility.
-2. Keep responses concise (2 to 4 short paragraphs) and focused on actionable next steps.
-3. Clearly distinguish between "Verified Information", "AI Guidance", and "Needs Official Confirmation".
-4. Grounded Sources: Cite verified portals and schemes accurately:
-   - Karnataka Student Fee Support Grant (SSP Post-Matric: ssp.postmatric.karnataka.gov.in, ₹45,000/yr)
-   - Central Sector Scholarship PM-USP (NSP: scholarships.gov.in, ₹12,000/yr)
-   - AICTE Pragati Scholarship for Meritorious Girls in Technical Education (₹50,000/yr)
-   - Minority Post-Matric Scholarship (dom.karnataka.gov.in, up to ₹30,000/yr)
-   - Karnataka Labour Welfare Board Educational Assistance (₹15,000 - ₹25,000/yr)
-   - College Emergency Assistance & Hardship Relief Fund (institutional stop-gap relief)
-   - AICTE Saksham Scholarship for Specially-Abled Students (₹50,000/yr)
-   - PM Fasal Bima Yojana (PMFBY: pmfby.gov.in, critical 72-hour crop loss intimation)
-   - National Family Benefit Scheme (NFBS: compassionate assistance for demise of earning breadwinner)
-   - Unique Disability ID (UDID: swavlambancard.gov.in, transport & academic concessions)
-   - Karnataka Seva Sindhu (sevasindhu.karnataka.gov.in, address & civic records porting)
-5. Never request passwords, full Aadhaar numbers, bank PINs, OTPs, or debit/credit card info.
-6. If the citizen mentions acute distress or emergency danger, advise contacting 112 / helpline services or human help.
+CRITICAL INSTRUCTIONS FOR CITIZEN SEARCH QUERIES:
+The user can be a Farmer, Student, Worker, Senior Citizen, Person with Disability, or general citizen searching for ANY government scheme, subsidy, certificate, or benefit.
+Always give exact, factual, grounded information:
+1. State the official scheme/service name and administering department.
+2. Provide the official government portal URL.
+3. State the financial benefit amount or entitlement.
+4. List the exact eligibility criteria and income ceilings.
+5. Provide a clear checklist of required documents (e.g., Aadhaar, RTC/Pahani, Bonafide, e-Shram, UDID).
+6. Give the time window, deadline, or helpline numbers (e.g., 72 hours for PMFBY crop loss, 1902 Seva Sindhu helpline, 14447 PMFBY helpline).
+
+Key Grounded Indian & Karnataka Portals to cite:
+- Farmers & Agriculture:
+  * PM-Kisan Samman Nidhi (pmkisan.gov.in): ₹6,000/year in 3 instalments of ₹2,000 via DBT. Requires Aadhaar e-KYC and land seeding.
+  * PM Fasal Bima Yojana (pmfby.gov.in / Samrakshane): Critical 72-hour crop loss intimation for localized floods/rain. Requires RTC/Pahani, crop survey number, and geotagged field photos. Helpline: 14447.
+  * Bhoomi Karnataka Land Records (bhoomi.karnataka.gov.in): View RTC / Pahani, Mutation register, and Khata extract.
+  * Raitha Siri: ₹10,000/hectare direct assistance for millet cultivation in Karnataka.
+- Students & Education:
+  * Karnataka SSP Post-Matric (ssp.postmatric.karnataka.gov.in): Up to ₹45,000/yr tuition fee reimbursement and maintenance allowance for SC/ST/OBC/EWS students.
+  * National Scholarship Portal PM-USP (scholarships.gov.in): ₹12,000/yr for graduation, ₹20,000/yr for post-graduation (merit above 80th percentile).
+  * AICTE Pragati & Saksham (aicte-india.org): ₹50,000/year for meritorious girl students and differently-abled students in technical courses.
+  * Karnataka Labour Welfare Board Educational Assistance (klwbapps.karnataka.gov.in): ₹15,000 - ₹25,000/yr for children of registered workers.
+- Workers & Labour:
+  * e-Shram National Database of Unorganised Workers (eshram.gov.in): 12-digit UAN, ₹2 Lakh accidental death cover, social security integration.
+  * Karnataka Building and Other Construction Workers Welfare Board (karunadu.karnataka.gov.in/bocw): Marriage aid (₹50,000), toolkits, transit hostels, and pension.
+  * PM Shram Yogi Maan-dhan (PM-SYM): Monthly pension of ₹3,000 after age 60 for unorganized workers with income ≤ ₹15,000.
+- Senior Citizens & Elders:
+  * Sandhya Suraksha Scheme (nadakacheri.karnataka.gov.in): ₹1,200/month DBT pension for Karnataka residents aged 65+ with household income ≤ ₹20,000/yr.
+  * Indira Gandhi National Old Age Pension Scheme (IGNOAPS / nsap.nic.in): Monthly pension for BPL senior citizens aged 60+.
+  * KSRTC Senior Citizen Bus Concession Pass (ksrtc.in): 25% to 50% bus fare concession on producing senior ID or Aadhaar.
+- Persons with Disabilities (Divyangjan):
+  * Unique Disability ID (UDID: swavlambancard.gov.in): Digital identity card for disability ≥ 40%, enables free public bus travel, exam scribe concessions, and railway discounts.
+  * Monthly Disability Pension Scheme: ₹1,400 to ₹2,000/month DBT for citizens with benchmark disability.
+  * ADIP Scheme: Free distribution of assistive aids (motorized tricycles, hearing aids, wheelchairs).
+- Civic, Certificates & Food:
+  * Karnataka Nadakacheri Atalji Janasnehi Kendra (nadakacheri.karnataka.gov.in): Online application for Caste & Income Certificates with RD Number valid for 5 years.
+  * Ahara Karnataka (ahara.kar.nic.in): BPL/APL/Anthyodaya Ration Card issuance and monthly Anna Bhagya food grain entitlements.
+  * Seva Sindhu (sevasindhu.karnataka.gov.in): Single window for 800+ government services.
+
+Safety Rules:
+- Never ask for passwords, bank PINs, OTPs, or CVVs.
+- Distinguish clearly between "Verified Information" and "Needs Official Verification".
 `;
 
   // 1. Try Gemini models in priority order
   if (ai) {
-    const candidateModels = ['gemini-2.5-flash', 'gemini-3.8-flash', 'gemini-flash-latest'];
+    const candidateModels = ['gemini-3.8-flash'];
 
     // Construct conversation history for Gemini multi-turn dialogue
     const rawContents: any[] = [];
@@ -589,21 +612,233 @@ Safety and Persona Rules:
     }
   }
 
-  // Grounded Deterministic Agent Fallback
-  const fallbackReplies: Record<string, string> = {
-    kn: 'ನಮಸ್ಕಾರ. ನಿಮ್ಮ ಪರಿಸ್ಥಿತಿಯನ್ನು ನಾನು ಅರ್ಥಮಾಡಿಕೊಂಡಿದ್ದೇನೆ. ನಿಮಗೆ ಕಾಲೇಜು ಶುಲ್ಕ ಸಹಾಯ, ಬೋನಫೈಡ್ ಪ್ರಮಾಣಪತ್ರ ಹಾಗೂ ಆದಾಯ ದೃಢೀಕರಣದ ಸರಿಯಾದ ಕ್ರಮಗಳನ್ನು ಹುಡುಕಲು ನಾನು ಸಹಾಯ ಮಾಡುತ್ತೇನೆ.',
-    hi: 'नमस्ते। मैं आपकी स्थिति को समझता हूँ। मैं आपको कॉलेज फीस सहायता, आवश्यक प्रमाण पत्र और छात्रवृत्ति विकल्पों के सही कदम खोजने में मदद करूँगा।',
-    ta: 'வணக்கம். உங்கள் சூழலை நான் புரிந்துகொள்கிறேன். கல்லூரி கட்டணச் சலுகை, சான்றிதழ்கள் மற்றும் கல்வி உதவித்தொகை பெறுவதற்கான அடுத்த வழிகளை அறிய நான் உதவுகிறேன்.',
-    te: 'నమస్కారం. మీ పరిస్థితిని నేను అర్థం చేసుకున్నాను. కాలేజ్ ఫీజు సహాయం, ధృవీకరణ పత్రాలు మరియు స్కాలర్‌షిప్ ఎంపికల కోసం సరైన మార్గదర్శకత్వం అందించడానికి నేను ఇక్కడ ఉన్నాను.',
-    ml: 'നമസ്കാരം. നിങ്ങളുടെ സാഹചര്യം ഞാൻ മനസ്സിലാക്കുന്നു. കോളേജ് ഫീസ് ഇളവ്, സർട്ടിഫിക്കറ്റുകൾ, സ്കോളർഷിപ്പ് സഹായങ്ങൾ എന്നിവ കണ്ടെത്താൻ ഞാൻ സഹായിക്കാം.',
-    mr: 'नमस्कार. मी तुमची अडचण समजू शकतो. कॉलेज फी सवलत, आवश्यक कागदपत्रे आणि शिष्यवृत्तीचे योग्य पर्याय शोधण्यात मी तुम्हाला मदत करेन.',
-    bn: 'নমস্কার। আমি আপনার পরিস্থিতি বুঝতে পারছি। কলেজ ফি সহায়তা, প্রয়োজনীয় সার্টিফিকেট এবং বৃত্তির বিকল্পগুলি খুঁজে পেতে আমি আপনাকে সাহায্য করব।',
-    en: 'I understand this situation can be stressful. I am here to help you identify verified fee-support, emergency assistance grants, and required document checklists step-by-step.',
-  };
+  // 3. Grounded Multi-Category Semantic Search Deterministic Engine
+  const q = (message || '').toLowerCase();
+  const isKn = language === 'kn';
+  let groundedReply = '';
+
+  // FARMER / AGRICULTURE SEARCH
+  if (/crop|rain|pmfby|fasal|kisan|bhoomi|rtc|pahani|farm|agri|ಬೆಳೆ|ಮಳೆ|ರೈತ|ಕೃಷಿ|ಪಹಣಿ/i.test(q)) {
+    if (isKn) {
+      groundedReply = `🌾 **ರೈತ ಕಲ್ಯಾಣ ಹಾಗೂ ಬೆಳೆ ರಕ್ಷಣೆ ಮಾಹಿತಿ (Verified Information)**:
+
+1. **ಪ್ರಧಾನಮಂತ್ರಿ ಫಸಲ್ ಬಿಮಾ ಯೋಜನೆ (PMFBY / ಸಂರಕ್ಷಣೆ ಪೋರ್ಟಲ್ - pmfby.gov.in)**:
+   - ಅತಿವೃಷ್ಟಿ ಅಥವಾ ಮಳೆ ಹಾನಿಯಾದಾಗ **೭೨ ಗಂಟೆಗಳ ಒಳಗೆ (72 Hours)** ಬೆಳೆ ಹಾನಿಯನ್ನು ವರದಿ ಮಾಡುವುದು ಕಡ್ಡಾಯ.
+   - ಅಗತ್ಯ ದಾಖಲೆಗಳು: ಆರ್‌ಟಿಸಿ (RTC / ಪಹಣಿ), ಜಮೀನಿನ ಸರ್ವೆ ನಂಬರ್, ವಿಮಾ ಪಾಲಿಸಿ ರಶೀದಿ ಮತ್ತು ನೀರು ನಿಂತ ಜಮೀನಿನ ಫೋಟೋ. ಸಹಾಯವಾಣಿ: **14447**.
+
+2. **ಪಿಎಂ-ಕಿಸಾನ್ & ರೈತ ಸಿರಿ (pmkisan.gov.in)**:
+   - ವಾರ್ಷಿಕ ₹೬,೦೦೦ (ಮೂರು ಕಂತುಗಳಲ್ಲಿ ₹೨,೦೦೦) ನೇರ ನಗದು ವರ್ಗಾವಣೆ (DBT).
+   - ಅಗತ್ಯವಿರುವ ಕ್ರಮ: ಆಧಾರ್ ಇ-ಕೆವೈಸಿ (e-KYC) ಮತ್ತು ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ ಜಮೀನು ದಾಖಲೆ ಜೋಡಣೆ.
+
+3. **ಭೂಮಿ ಆರ್‌ಟಿಸಿ / ಪಹಣಿ (bhoomi.karnataka.gov.in)**:
+   - ನಿಮ್ಮ ತಾಲ್ಲೂಕು, ಹೋಬಳಿ, ಗ್ರಾಮ ಮತ್ತು ಸರ್ವೆ ನಂಬರ್ ನಮೂದಿಸಿ ಅಧಿಕೃತ ಆರ್‌ಟಿಸಿಯನ್ನು ತಕ್ಷಣ ಡೌನ್‌ಲೋಡ್ ಮಾಡಬಹುದು.`;
+    } else {
+      groundedReply = `🌾 **Farmer Welfare & Crop Relief Information (Verified Information)**:
+
+1. **PM Fasal Bima Yojana (PMFBY - pmfby.gov.in / Samrakshane)**:
+   - In case of localized crop damage or heavy rain flooding, it is mandatory to lodge intimation **within 72 hours**.
+   - Required Documents: Land Survey RTC / Pahani, crop insurance policy acknowledgment, and geotagged submergence photographs. Helpline: **14447**.
+
+2. **PM-Kisan Samman Nidhi & Raitha Siri (pmkisan.gov.in)**:
+   - ₹6,000/year credited directly in three equal instalments of ₹2,000 via DBT.
+   - Requirements: Aadhaar e-KYC verification and landholding survey number seeding.
+
+3. **Bhoomi RTC / Pahani Portal (bhoomi.karnataka.gov.in)**:
+   - Instant access to official digital RTC extracts, mutation records, and survey maps required for all agricultural compensation claims.`;
+    }
+  }
+
+  // SCHOLARSHIPS / STUDENTS SEARCH
+  else if (/scholarship|college|fee|student|ssp|nsp|pragati|saksham|bonafide|ವಿದ್ಯಾರ್ಥಿವೇತನ|ಶುಲ್ಕ|ಕಾಲೇಜು|ಬೋನಫೈಡ್/i.test(q)) {
+    if (isKn) {
+      groundedReply = `🎓 **ವಿದ್ಯಾರ್ಥಿವೇತನ ಮತ್ತು ಕಾಲೇಜು ಶುಲ್ಕ ಬೆಂಬಲ (Verified Information)**:
+
+1. **ಕರ್ನಾಟಕ ಎಸ್.ಎಸ್.ಪಿ ಪೋಸ್ಟ್-ಮೆಟ್ರಿಕ್ ವಿದ್ಯಾರ್ಥಿವೇತನ (ssp.postmatric.karnataka.gov.in)**:
+   - ಡಿಪ್ಲೊಮಾ, ಪದವಿ, ಎಂಜಿನಿಯರಿಂಗ್ ಹಾಗೂ ಸ್ನಾತಕೋತ್ತರ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ₹೪೫,೦೦೦ ವರೆಗೆ ಪೂರ್ಣ ಬೋಧನಾ ಶುಲ್ಕ ಮರುಪಾವತಿ ಹಾಗೂ ಮಾಸಿಕ ನಿರ್ವಹಣಾ ಭತ್ಯೆ.
+   - ಅರ್ಹತೆ: ಮಾನ್ಯತೆ ಪಡೆದ ಕಾಲೇಜಿನಲ್ಲಿ ದಾಖಲಾತಿ, ಚಾಲ್ತಿಯಲ್ಲಿರುವ ಬೋನಫೈಡ್ ಪ್ರಮಾಣಪತ್ರ ಮತ್ತು ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ (SC/ST ≤ ₹೨.೫ ಲಕ್ಷ, OBC/EWS ≤ ₹೧.೫ ಲಕ್ಷ).
+
+2. **ರಾಷ್ಟ್ರೀಯ ಸ್ಕಾಲರ್‌ಶಿಪ್ ಪೋರ್ಟಲ್ PM-USP (scholarships.gov.in)**:
+   - 12ನೇ ತರಗತಿಯಲ್ಲಿ ಶೇಕಡಾ 80 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಅಂಕ ಗಳಿಸಿದ ಪದವಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ವಾರ್ಷಿಕ ₹೧೨,೦೦೦ ನೇರ ನೆರವು.
+
+3. **ಕಾಲೇಜು ತುರ್ತು ಪರಿಹಾರ ನಿಧಿ (Institutional Relief)**:
+   - ಸರ್ಕಾರಿ ವಿದ್ಯಾರ್ಥಿವೇತನ ಬರುವವರೆಗೆ ಶುಲ್ಕ ಮುಂದೂಡಿಕೆ (Fee Deferral) ಅಥವಾ ಕಾಲೇಜು ವಿದ್ಯಾರ್ಥಿ ಕಲ್ಯಾಣ ವಿಭಾಗದಿಂದ ತಾತ್ಕಾಲಿಕ ಪರಿಹಾರ ಪಡೆಯಬಹುದು.`;
+    } else {
+      groundedReply = `🎓 **Scholarships & College Fee Assistance (Verified Information)**:
+
+1. **Karnataka SSP Post-Matric Scholarship (ssp.postmatric.karnataka.gov.in)**:
+   - Up to ₹45,000/year complete tuition reimbursement and maintenance allowances for technical and degree students.
+   - Requirements: Valid College Bonafide Certificate for 2026-27, Revenue Dept Income RD Number (SC/ST ≤ ₹2.5 Lakh, OBC/EWS ≤ ₹1.5 Lakh), and previous marks card.
+
+2. **Central Sector PM-USP Scheme (scholarships.gov.in)**:
+   - ₹12,000/year for undergraduate degrees for students above 80th percentile in Class 12 board exams with family income ≤ ₹4.5 Lakh.
+
+3. **AICTE Pragati & Saksham Schemes (aicte-india.org)**:
+   - ₹50,000/year for meritorious girl students and differently-abled students pursuing AICTE technical diplomas and degrees.`;
+    }
+  }
+
+  // SENIOR CITIZENS / PENSIONS SEARCH
+  else if (/pension|senior|old age|elder|sandhya|agnoaps|ಪಿಂಚಣಿ|ಹಿರಿಯ|ವೃದ್ಧಾಪ್ಯ|ಸಂಧ್ಯಾ/i.test(q)) {
+    if (isKn) {
+      groundedReply = `🧓 **ಹಿರಿಯ ನಾಗರಿಕರ ಪಿಂಚಣಿ ಮತ್ತು ಕ್ಷೇಮಾಭಿವೃದ್ಧಿ ಯೋಜನೆಗಳು (Verified Information)**:
+
+1. **ಸಂಧ್ಯಾ ಸುರಕ್ಷಾ ಯೋಜನೆ (Sandhya Suraksha - nadakacheri.karnataka.gov.in)**:
+   - ೬೫ ವರ್ಷ ಮೇಲ್ಪಟ್ಟ ಕರ್ನಾಟಕದ ಹಿರಿಯ ನಾಗರಿಕರಿಗೆ ಮಾಸಿಕ **₹೧,೨೦೦ ನೇರ ಡಿಬಿಟಿ ಪಿಂಚಣಿ**.
+   - ಅರ್ಹತೆ: ಕುಟುಂಬದ ವಾರ್ಷಿಕ ಆದಾಯ ₹೨೦,೦೦೦ ಕ್ಕಿಂತ ಕಡಿಮೆ ಇರಬೇಕು. ಯಾವುದೇ ವಾಣಿಜ್ಯ ಅಥವಾ ದೊಡ್ಡ ಪಿಂಚಣಿ ಪಡೆಯುತ್ತಿರಬಾರದು.
+   - ಅರ್ಜಿ ಸಲ್ಲಿಕೆ: ನಾಡಕಚೇರಿ (Nadakacheri / ಅಟಲ್ ಜೀ ಜನಸ್ನೇಹಿ ಕೇಂದ್ರ) ಅಥವಾ ಸೇವಾ ಸಿಂಧು ಮೂಲಕ.
+
+2. **ಇಂದಿರಾ ಗಾಂಧಿ ರಾಷ್ಟ್ರೀಯ ವೃದ್ಧಾಪ್ಯ ಪಿಂಚಣಿ (IGNOAPS - nsap.nic.in)**:
+   - ಬಿಪಿಎಲ್ (BPL) ಕುಟುಂಬದ ೬೦ ವರ್ಷ ಮೇಲ್ಪಟ್ಟ ಹಿರಿಯರಿಗೆ ಮಾಸಿಕ ಕೇಂದ್ರ ನೆರವು.
+
+3. **ಕೆಎಸ್‌ಆರ್‌ಟಿಸಿ ಉಚಿತ/ರಿಯಾಯಿತಿ ಹಿರಿಯ ನಾಗರಿಕ ಬಸ್ ಪಾಸ್ (ksrtc.in)**:
+   - ವಯಸ್ಸಿನ ಪುರಾವೆ (ಆಧಾರ್ ಅಥವಾ ಮತದಾರರ ಗುರುತಿನ ಚೀಟಿ) ಹಾಜರುಪಡಿಸಿ ರಿಯಾಯಿತಿ ದರದಲ್ಲಿ ಪ್ರಯಾಣಿಸಬಹುದು.`;
+    } else {
+      groundedReply = `🧓 **Senior Citizen Welfare & Monthly Pension Schemes (Verified Information)**:
+
+1. **Sandhya Suraksha Scheme (nadakacheri.karnataka.gov.in)**:
+   - **₹1,200/month Direct Benefit Transfer (DBT)** pension for senior citizens of Karnataka aged 65 and above.
+   - Eligibility: Annual household income must be ≤ ₹20,000 per annum, not receiving formal corporate pensions.
+   - Application: Submit via Nadakacheri (Atalji Janasnehi Kendra) or Seva Sindhu with age proof, income proof, and bank passbook.
+
+2. **Indira Gandhi National Old Age Pension Scheme (IGNOAPS - nsap.nic.in)**:
+   - Monthly social security pension for citizens aged 60+ belonging to Below Poverty Line (BPL) families.
+
+3. **KSRTC Senior Citizen Bus Travel Concessions (ksrtc.in)**:
+   - Subsidized public transport concessions across Karnataka on presenting valid Senior Citizen ID or Aadhaar Card.`;
+    }
+  }
+
+  // WORKERS / LABOUR SEARCH
+  else if (/worker|labour|e-shram|bocw|construction|wage|unorganized|ಕಾರ್ಮಿಕ|ಶ್ರಮಿಕ|ಇ-ಶ್ರಮ್|ಕಟ್ಟಡ/i.test(q)) {
+    if (isKn) {
+      groundedReply = `🔨 **ಕಾರ್ಮಿಕ ಕಲ್ಯಾಣ ಹಾಗೂ ಸಾಮಾಜಿಕ ಭದ್ರತಾ ಯೋಜನೆಗಳು (Verified Information)**:
+
+1. **ಇ-ಶ್ರಮ್ ರಾಷ್ಟ್ರೀಯ ಪೋರ್ಟಲ್ (e-Shram - eshram.gov.in)**:
+   - ಅಸಂಘಟಿತ ಕಾರ್ಮಿಕರಿಗೆ ೧೨ ಅಂಕಿಯ ಯುಎಎನ್ (UAN) ಗುರುತಿನ ಚೀಟಿ ಹಾಗೂ ₹೨ ಲಕ್ಷ ಅಪಘಾತ ವಿಮಾ ರಕ್ಷಣೆ.
+
+2. **ಕರ್ನಾಟಕ ಕಟ್ಟಡ ಮತ್ತು ಇತರೆ ನಿರ್ಮಾಣ ಕಾರ್ಮಿಕ ಕಲ್ಯಾಣ ಮಂಡಳಿ (BOCW Board)**:
+   - ನೋಂದಾಯಿತ ಕಾರ್ಮಿಕರ ಮಕ್ಕಳಿಗೆ ವಾರ್ಷಿಕ **₹೧೫,೦೦೦ ದಿಂದ ₹೨೫,೦೦೦ ಶೈಕ್ಷಣಿಕ ಧನಸಹಾಯ**.
+   - ಹೆಣ್ಣು ಮಕ್ಕಳ ಮದುವೆಗೆ ₹೫೦,೦೦೦ ಆರ್ಥಿಕ ನೆರವು, ಹೆರಿಗೆ ಭತ್ಯೆ ಹಾಗೂ ಉಚಿತ ಟೂಲ್‌ಕಿಟ್ ವಿತರಣೆ.
+
+3. **ಪ್ರಧಾನಮಂತ್ರಿ ಶ್ರಮ ಯೋಗಿ ಮಾನ-ಧನ (PM-SYM)**:
+   - ೬೦ ವರ್ಷದ ನಂತರ ಪ್ರತಿ ತಿಂಗಳು **₹೩,೦೦೦ ಖಚಿತ ಪಿಂಚಣಿ** ನೀಡುವ ಯೋಜನೆ.`;
+    } else {
+      groundedReply = `🔨 **Labour & Unorganized Worker Welfare Schemes (Verified Information)**:
+
+1. **e-Shram National Portal (eshram.gov.in)**:
+   - Free registration providing a 12-digit Universal Account Number (UAN) and ₹2 Lakh accidental death/disability insurance cover under PMSBY.
+
+2. **Karnataka BOCW Workers Welfare Board (karunadu.karnataka.gov.in/bocw)**:
+   - **Educational assistance of ₹15,000 to ₹25,000/year** for children of registered construction workers.
+   - Marriage assistance grant of ₹50,000, maternity benefits, toolkits, and pension after age 60.
+
+3. **Pradhan Mantri Shram Yogi Maan-dhan (PM-SYM)**:
+   - Assured monthly pension of ₹3,000 for unorganized workers earning ≤ ₹15,000/month upon reaching age 60.`;
+    }
+  }
+
+  // DISABILITY / UDID SEARCH
+  else if (/disability|udid|divyang|handicap|wheelchair|ವಿಕಲಚೇತನ|ವಿಶೇಷ ಚೇತನ|ಯುಡಿಐಡಿ/i.test(q)) {
+    if (isKn) {
+      groundedReply = `♿ **ವಿಶೇಷ ಚೇತನರ (ದಿವ್ಯಾಂಗಜನ್) ಸೌಲಭ್ಯಗಳು (Verified Information)**:
+
+1. **ಯುಡಿಐಡಿ ಕಾರ್ಡ್ (Unique Disability ID - swavlambancard.gov.in)**:
+   - ಕನಿಷ್ಠ ೪೦% ವಿಕಲತೆ ಹೊಂದಿರುವವರಿಗೆ ಏಕೈಕ ಡಿಜಿಟಲ್ ಗುರುತಿನ ಚೀಟಿ.
+   - ಸೌಲಭ್ಯಗಳು: ಉಚಿತ ಸರ್ಕಾರಿ ಬಸ್ ಪಾಸ್, ರೈಲ್ವೆ ರಿಯಾಯಿತಿ, ಕಾಲೇಜು ಪರೀಕ್ಷೆಗಳಲ್ಲಿ ಸ್ಕ್ರೈಬ್ (Scribe) ಹಾಗೂ ಹೆಚ್ಚುವರಿ ಸಮಯ.
+
+2. **ಮಾಸಿಕ ದಿವ್ಯಾಂಗ ಪಿಂಚಣಿ (Disability Pension)**:
+   - ತೀವ್ರ ವಿಕಲತೆ ಹೊಂದಿರುವವರಿಗೆ ಪ್ರತಿ ತಿಂಗಳು ₹೧,೪೦೦ ರಿಂದ ₹೨,೦೦೦ ವರೆಗೆ ನೇರ ಡಿಬಿಟಿ ನೆರವು.
+
+3. **ಎಐಸಿಟಿಇ ಸಕ್ಷಮ ವಿದ್ಯಾರ್ಥಿವೇತನ (AICTE Saksham - aicte-india.org)**:
+   - ತಾಂತ್ರಿಕ ಕಾಲೇಜುಗಳಲ್ಲಿ ವ್ಯಾಸಂಗ ಮಾಡುವ ವಿಕಲಚೇತನ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ವಾರ್ಷಿಕ ₹೫೦,೦೦೦ ಅನುದಾನ.`;
+    } else {
+      groundedReply = `♿ **Persons with Disabilities (Divyangjan) Welfare (Verified Information)**:
+
+1. **Unique Disability ID (UDID - swavlambancard.gov.in)**:
+   - Nationwide single digital card for individuals with benchmark disability (≥ 40%).
+   - Entitlements: Free KSRTC bus travel, railway concession certificates, academic exam scribe accommodations, and 5% reservation in higher education.
+
+2. **Monthly Disability Pension Scheme**:
+   - Monthly DBT assistance of ₹1,400 to ₹2,000 for verified benchmark disability holders.
+
+3. **ADIP Scheme & Assistive Equipment**:
+   - Free distribution of motorized tricycles, braille kits, digital hearing aids, and orthotic prosthetics at district civil hospitals.`;
+    }
+  }
+
+  // RATION CARD / FOOD SUPPLIES SEARCH
+  else if (/ration|bpl|apl|food|ahara|ಪಡಿತರ|ರೇಷನ್|ಬಿಪಿಎಲ್/i.test(q)) {
+    if (isKn) {
+      groundedReply = `🍚 **ಪಡಿತರ ಚೀಟಿ ಮತ್ತು ಆಹಾರ ನಾಗರಿಕ ಸರಬರಾಜು (Verified Information)**:
+
+1. **ಕರ್ನಾಟಕ ಆಹಾರ ಇಲಾಖೆ (Ahara Portal - ahara.kar.nic.in)**:
+   - ಬಿಪಿಎಲ್ (BPL), ಎಪಿಎಲ್ (APL) ಮತ್ತು ಅಂತ್ಯೋದಯ ಪಡಿತರ ಚೀಟಿಗಳ ಅರ್ಜಿ ಸಲ್ಲಿಕೆ ಹಾಗೂ ಸ್ಥಿತಿ ಪರಿಶೀಲನೆ.
+   - ಪಡಿತರ ಅಂಗಡಿ (Fair Price Shop) ವರ್ಗಾವಣೆ ಹಾಗೂ ಕುಟುಂಬದ ಸದಸ್ಯರ ಹೆಸರು ಸೇರ್ಪಡೆ/ತೆಗೆದುಹಾಕುವಿಕೆ.
+
+2. **ಅನ್ನಭಾಗ್ಯ ಮತ್ತು ಡಿಬಿಟಿ (Anna Bhagya DBT)**:
+   - ಬಿಪಿಎಲ್ ಕಾರ್ಡ್‌ದಾರರಿಗೆ ಉಚಿತ ಅಕ್ಕಿ ಹಾಗೂ ಹೆಚ್ಚುವರಿ ಧಾನ್ಯದ ಬದಲಿಗೆ ನೇರ ನಗದು ವರ್ಗಾವಣೆ (Aadhaar DBT).`;
+    } else {
+      groundedReply = `🍚 **Ration Card & Food Civil Supplies (Verified Information)**:
+
+1. **Ahara Karnataka Portal (ahara.kar.nic.in)**:
+   - Official portal for BPL, APL, and Anthyodaya Anna Yojana (AAY) ration card applications, e-KYC status, and family member demographic updates.
+   - Fair price shop allocation and portability under One Nation One Ration Card (ONORC).
+
+2. **Anna Bhagya DBT Entitlements**:
+   - Subsidized food grains and Direct Benefit Transfer for entitled family members linked with active Aadhaar-seeded bank accounts.`;
+    }
+  }
+
+  // CASTE & INCOME CERTIFICATES SEARCH
+  else if (/certificate|income|caste|rd number|nadakacheri|revenue|ಆದಾಯ|ಜಾತಿ|ಪ್ರಮಾಣಪತ್ರ|ನಾಡಕಚೇರಿ/i.test(q)) {
+    if (isKn) {
+      groundedReply = `📄 **ಆದಾಯ ಹಾಗೂ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರಗಳು (Verified Information)**:
+
+1. **ನಾಡಕಚೇರಿ ಅಟಲ್ ಜೀ ಜನಸ್ನೇಹಿ ಕೇಂದ್ರ (nadakacheri.karnataka.gov.in)**:
+   - ಕಂದಾಯ ಇಲಾಖೆಯಿಂದ ಅಧಿಕೃತ **ಆರ್.ಡಿ (RD) ಸಂಖ್ಯೆ** ಹೊಂದಿರುವ ಆದಾಯ ಮತ್ತು ಜಾತಿ ಪ್ರಮಾಣಪತ್ರಗಳ ವಿತರಣೆ.
+   - ಸಿಂಧುತ್ವ: ಒಮ್ಮೆ ಪಡೆದ ಪ್ರಮಾಣಪತ್ರವು ನಿಯಮಾನುಸಾರ ೫ ವರ್ಷಗಳವರೆಗೆ ಮಾನ್ಯವಾಗಿರುತ್ತದೆ.
+   - ಸಕಾಲ (Sakala) ಕಾಯ್ದೆಯಡಿ ಅರ್ಜಿ ಸಲ್ಲಿಸಿದ ೭ ರಿಂದ ೧೪ ದಿನಗಳಲ್ಲಿ ಪ್ರಮಾಣಪತ್ರ ವಿತರಣೆ ಕಡ್ಡಾಯ.`;
+    } else {
+      groundedReply = `📄 **Caste & Income Certificates Verification (Verified Information)**:
+
+1. **Nadakacheri Atalji Janasnehi Kendra (nadakacheri.karnataka.gov.in)**:
+   - Official Karnataka Revenue Department portal issuing digitally signed Caste & Income Certificates with verifiable **RD Numbers**.
+   - Validity: Once issued, the certificate is legally valid for up to 5 years for educational admissions and scholarships.
+   - Timelines: Guaranteed delivery within 7 to 14 days under the Karnataka Sakala Services Act.`;
+    }
+  }
+
+  // PROJECT STATUS / TRACKING SEARCH
+  else if (/status|track|case|application|project|milestone|ಸ್ಥಿತಿ|ಟ್ರ್ಯಾಕ್|ಅರ್ಜಿ/i.test(q)) {
+    if (isKn) {
+      groundedReply = `📊 **ಯೋಜನೆಗಳ ಸ್ಥಿತಿ ಮತ್ತು ಅರ್ಜಿ ಪರಿಶೀಲನೆ (Verified Information)**:
+
+- ನಿಮ್ಮ ಅರ್ಜಿಗಳ ಹಂತ, ಪರಿಶೀಲನೆ ಹಾಗೂ ನೇರ ನಗದು ವರ್ಗಾವಣೆ (DBT) ಪ್ರಗತಿಯನ್ನು **ಯೋಜನೆಗಳ ಸ್ಥಿತಿ (Project Status)** ಟ್ಯಾಬ್‌ನಲ್ಲಿ ವೀಕ್ಷಿಸಬಹುದು.
+- ನೀವು ಹೊಸ ಅರ್ಜಿಯ ಉಲ್ಲೇಖ ಸಂಖ್ಯೆಯನ್ನು (Reference Code) ದಾಖಲಿಸಿ ಅದರ ೪ ಹಂತಗಳ ಪರಿಶೀಲನೆಯನ್ನು ನೈಜ ಸಮಯದಲ್ಲಿ ಟ್ರ್ಯಾಕ್ ಮಾಡಬಹುದು.`;
+    } else {
+      groundedReply = `📊 **Live Project Status & Application Tracking (Verified Information)**:
+
+- Track all your submitted welfare cases, department milestones, and Direct Benefit Transfer credits directly on the **Project Status** tab.
+- Each case provides real-time progress indicators (Draft Lodged → Attestation → Department Scrutiny → DBT Disbursal) with critical deadline alerts.`;
+    }
+  }
+
+  // GENERAL SEARCH FALLBACK
+  else {
+    if (isKn) {
+      groundedReply = `ನಮಸ್ಕಾರ. ನಿಮ್ಮ ಪ್ರಶ್ನೆಗೆ ಸಹಾಯ ಮಾಡಲು ನಾನು ಇಲ್ಲಿದ್ದೇನೆ. 
+ನೀವು ಬೆಳೆ ಪರಿಹಾರ (PMFBY), ರೈತ ಸಹಾಯಧನ (PM-Kisan), ವಿದ್ಯಾರ್ಥಿವೇತನ (SSP), ಕಾರ್ಮಿಕ ಕಾರ್ಡ್ (e-Shram / BOCW), ಹಿರಿಯ ನಾಗರಿಕರ ಪಿಂಚಣಿ (ಸಂಧ್ಯಾ ಸುರಕ್ಷಾ), ದಿವ್ಯಾಂಗ ಸೌಲಭ್ಯ (UDID) ಅಥವಾ ಪಡಿತರ ಚೀಟಿ ಕುರಿತು ಹುಡುಕಬಹುದು. 
+ನಿಮಗೆ ಯಾವ ಯೋಜನೆ ಅಥವಾ ದಾಖಲೆಯ ವಿವರ ಬೇಕು ಎಂದು ಸ್ಪಷ್ಟವಾಗಿ ತಿಳಿಸಿ.`;
+    } else {
+      groundedReply = `Hello. I am here to guide you with verified public service information.
+You can search for crop loss compensation (PMFBY), farmer income support (PM-Kisan), scholarships (Karnataka SSP / NSP), labour welfare (e-Shram / BOCW), senior citizen pensions (Sandhya Suraksha), disability ID (UDID), or ration cards (Ahara).
+Please tell me the specific scheme, certificate, or situation you would like information on.`;
+    }
+  }
 
   return res.json({
     success: true,
-    reply: fallbackReplies[language] || fallbackReplies.en,
+    reply: groundedReply,
     source: 'nirvaha-deterministic-grounded-engine',
   });
 });

@@ -25,6 +25,7 @@ interface LandingPageProps {
   onSelectLifeEvent: (eventId: LifeEventId) => void;
   onNavigate: (tab: string) => void;
   onVoiceStart: () => void;
+  onOpenWhoWeAre?: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
@@ -32,6 +33,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onSelectLifeEvent,
   onNavigate,
   onVoiceStart,
+  onOpenWhoWeAre,
 }) => {
   const t = getTranslation(language);
 
@@ -77,7 +79,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* Primary Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <button
-              onClick={() => onSelectLifeEvent('student_fees')}
+              onClick={() => onNavigate('status')}
               className="w-full sm:w-auto min-h-[48px] px-6 py-3 rounded-xl bg-[#38104E] hover:bg-[#4D166A] text-white font-semibold text-sm sm:text-base transition-all shadow-md shadow-[#38104E]/20 flex items-center justify-center gap-2 active:scale-[0.98]"
             >
               <span>{t.startWithSituation}</span>
@@ -97,11 +99,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               className="w-full sm:w-auto min-h-[48px] px-6 py-3 rounded-xl bg-purple-100 hover:bg-purple-200/70 text-[#38104E] font-semibold text-sm sm:text-base border border-purple-200 transition-colors shadow-xs flex items-center justify-center gap-2"
             >
               <FolderLock className="w-4 h-4 text-[#9333EA]" />
-              <span>{language === 'kn' ? 'ದಾಖಲೆಗಳ ವಾಲ್ಟ್ & ಸ್ಕಾಲರ್‌ಶಿಪ್‌ಗಳು' : 'Document Vault & Scholarships'}</span>
+              <span>{language === 'kn' ? 'ದಾಖಲೆಗಳ ವಾಲ್ಟ್' : 'Document Vault'}</span>
             </button>
+
+            {onOpenWhoWeAre && (
+              <button
+                onClick={onOpenWhoWeAre}
+                className="w-full sm:w-auto min-h-[48px] px-6 py-3 rounded-xl bg-white hover:bg-purple-50 text-[#38104E] font-bold text-sm sm:text-base border-2 border-[#9333EA]/30 transition-all shadow-xs flex items-center justify-center gap-2"
+              >
+                <Users className="w-4 h-4 text-[#9333EA]" />
+                <span>{language === 'kn' ? 'ನಾವ್ಯಾರು (Who We Are)' : 'Who We Are'}</span>
+              </button>
+            )}
           </div>
 
-          {/* Large Accessible Microphone Interaction */}
+          {/* Accessible Microphone Interaction */}
           <div className="pt-3 max-w-xs mx-auto">
             <div className="bg-white px-6 py-4 rounded-2xl border border-purple-200/80 shadow-sm flex flex-col items-center gap-2.5 hover:border-[#9333EA]/40 transition-colors">
               <button
